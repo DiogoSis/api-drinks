@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model categoriaingrediente {
+  categoria_id Int           @id @default(autoincrement())
+  nome         String        @db.VarChar(50)
+  tipo         String?       @db.VarChar(50)
+  ingrediente  ingrediente[]
+}
+
+model drink {
+  drink_id      Int             @id @default(autoincrement())
+  nome          String          @db.VarChar(100)
+  descricao     String?
+  categoria     String?         @db.VarChar(50)
+  preparation   String?
+  photo_url     String?         @db.VarChar(255)
+  pedidodetalhe pedidodetalhe[]
+  receitadrink  receitadrink[]
+}
+
+model estoque {
+  estoque_id        Int         @id @default(autoincrement())
+  ingrediente_id    Int         @unique
+  quantidade_atual  Decimal     @db.Decimal
+  quantidade_minima Decimal     @db.Decimal
+  ingrediente       ingrediente @relation(fields: [ingrediente_id], references: [ingrediente_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model fornecedor {
+  fornecedor_id         Int                     @id @default(autoincrement())
+  nome                  String                  @db.VarChar(100)
+  contato               String?                 @db.VarChar(255)
+  fornecedoringrediente fornecedoringrediente[]
+}
+
+model fornecedoringrediente {
+  fornecedor_id  Int
+  ingrediente_id Int
+  fornecedor     fornecedor  @relation(fields: [fornecedor_id], references: [fornecedor_id], onDelete: NoAction, onUpdate: NoAction)
+  ingrediente    ingrediente @relation(fields: [ingrediente_id], references: [ingrediente_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([fornecedor_id, ingrediente_id])
+}
+
+model ingrediente {
+  ingrediente_id        Int                     @id @default(autoincrement())
+  nome                  String                  @db.VarChar(100)
+  categoria_id          Int
+  unidade_medida_id     Int
+  estoque               estoque?
+  fornecedoringrediente fornecedoringrediente[]
+  categoriaingrediente  categoriaingrediente    @relation(fields: [categoria_id], references: [categoria_id], onDelete: NoAction, onUpdate: NoAction)
+  unidademedida         unidademedida           @relation(fields: [unidade_medida_id], references: [unidade_id], onDelete: NoAction, onUpdate: NoAction)
+  movimentacaoestoque   movimentacaoestoque[]
+  receitadrink          receitadrink[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model movimentacaoestoque {
+  movimentacao_id Int         @id @default(autoincrement())
+  ingrediente_id  Int
+  tipo            String      @db.VarChar(10)
+  quantidade      Decimal     @db.Decimal
+  data_hora       DateTime    @default(now()) @db.Timestamp(6)
+  origem          String?     @db.VarChar(50)
+  ingrediente     ingrediente @relation(fields: [ingrediente_id], references: [ingrediente_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model pedido {
+  pedido_id     Int             @id @default(autoincrement())
+  data_hora     DateTime        @default(now()) @db.Timestamp(6)
+  status        String?         @db.VarChar(50)
+  pedidodetalhe pedidodetalhe[]
+}
+
+model pedidodetalhe {
+  pedido_detalhe_id Int    @id @default(autoincrement())
+  pedido_id         Int
+  drink_id          Int
+  quantidade        Int
+  drink             drink  @relation(fields: [drink_id], references: [drink_id], onDelete: NoAction, onUpdate: NoAction)
+  pedido            pedido @relation(fields: [pedido_id], references: [pedido_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model receitadrink {
+  drink_id              Int
+  ingrediente_id        Int
+  quantidade_necessaria Decimal     @db.Decimal
+  drink                 drink       @relation(fields: [drink_id], references: [drink_id], onDelete: NoAction, onUpdate: NoAction)
+  ingrediente           ingrediente @relation(fields: [ingrediente_id], references: [ingrediente_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([drink_id, ingrediente_id])
+  @@index([drink_id], map: "idx_receita_drink_id")
+}
+
+model unidademedida {
+  unidade_id  Int           @id @default(autoincrement())
+  nome        String        @db.VarChar(20)
+  abreviacao  String        @db.VarChar(5)
+  ingrediente ingrediente[]
+}

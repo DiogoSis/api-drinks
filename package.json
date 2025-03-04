@@ -1,0 +1,29 @@
+{
+  "name": "api-drinks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsx src/main.ts",
+    "start:dev": "tsx watch src/main.ts",
+    "build": "tsup src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "@types/express": "^5.0.0",
+    "@types/sequelize": "^4.28.20",
+    "express": "^4.21.2",
+    "pg": "^8.13.3",
+    "sequelize": "^6.37.6",
+    "ts-node-dev": "^2.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
