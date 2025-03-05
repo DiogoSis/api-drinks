@@ -17,10 +17,15 @@ type DrinkWithRelations = drink & {
   receitadrink: ReceitaWithRelations[];
 };
 
+let prismaClient: PrismaClient | undefined = undefined;
+
 export class DrinkRepository implements IDrinkRepository {
   private prisma: PrismaClient;
 
   constructor() {
+    if (!prismaClient) {
+      prismaClient = new PrismaClient();
+    }
     this.prisma = new PrismaClient();
   }
 
