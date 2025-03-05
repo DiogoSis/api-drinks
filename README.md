@@ -69,6 +69,9 @@ Retorna um drink específico pelo seu ID, incluindo todos os ingredientes, quant
 - **Express**: Framework para aplicações web
 - **Prisma**: ORM para mapeamento e interação com o banco de dados
 - **PostgreSQL**: Sistema de gerenciamento de banco de dados relacional
+- **AWS Lambda**: Função serverless para executar a aplicação
+- **AWS API Gateway**: Gateway de API para expor os endpoints
+- **Terraform**: Ferramenta de infraestrutura como código
 
 ## Instalação
 
@@ -106,6 +109,15 @@ api-drinks/
 │   ├── routes/           # Definição de rotas
 │   ├── services/         # Lógica de negócio
 │   └── main.ts           # Ponto de entrada da aplicação
+├── terraform/            # Configuração do Terraform para AWS
+│   ├── main.tf           # Configuração principal do Terraform
+│   ├── variables.tf      # Definição das variáveis
+│   ├── lambda.tf         # Configuração do Lambda
+│   ├── api-gateway.tf    # Configuração da API Gateway
+│   ├── iam.tf            # Configuração das permissões IAM
+│   └── outputs.tf        # Outputs (URL da API, etc)
+├── scripts/              # Scripts auxiliares
+│   └── build.sh          # Script para construir o pacote de deploy
 ├── .env                  # Variáveis de ambiente
 ├── package.json          # Dependências e scripts
 ├── tsconfig.json         # Configuração do TypeScript
