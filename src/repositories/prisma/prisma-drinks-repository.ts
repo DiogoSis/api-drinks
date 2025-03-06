@@ -1,36 +1,10 @@
-import {
-  PrismaClient,
-  drink,
-  receitadrink,
-  ingrediente,
-  unidademedida,
-} from "@prisma/client";
-import { IDrink, IDrinkRepository } from "../interfaces/drink";
+import { prisma } from '../../infra/lib/prisma';
+import { IDrink, DrinksRepository } from "../drinks-repository";
 
-type ReceitaWithRelations = receitadrink & {
-  ingrediente: ingrediente & {
-    unidademedida: unidademedida;
-  };
-};
-
-type DrinkWithRelations = drink & {
-  receitadrink: ReceitaWithRelations[];
-};
-
-let prismaClient: PrismaClient | undefined = undefined;
-
-export class DrinkRepository implements IDrinkRepository {
-  private prisma: PrismaClient;
-
-  constructor() {
-    if (!prismaClient) {
-      prismaClient = new PrismaClient();
-    }
-    this.prisma = new PrismaClient();
-  }
+export class PrismaDrinksRepository implements DrinksRepository {
 
   async findAll(): Promise<IDrink[]> {
-    const drinks = await this.prisma.drink.findMany({
+    const drinks = await prisma.drink.findMany({
       orderBy: {
         drink_id: "asc",
       },
@@ -63,7 +37,7 @@ export class DrinkRepository implements IDrinkRepository {
   }
 
   async findById(id: number): Promise<IDrink | null> {
-    const drink = await this.prisma.drink.findUnique({
+    const drink = await prisma.drink.findUnique({
       where: { drink_id: id },
       include: {
         receitadrink: {
