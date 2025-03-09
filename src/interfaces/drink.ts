@@ -14,7 +14,12 @@ export interface IDrink {
   ingredientes: IDrinkIngredient[];
 }
 
-export interface DrinksRepository {
+export interface IDrinkRepository {
   findAll(): Promise<IDrink[]>;
   findById(id: number): Promise<IDrink | null>;
+}
+
+export interface IDrinkService {
+  getAllDrinks(): Promise<IDrink[]>;
+  getDrinkById(id: number): Promise<IDrink | null>;
 }
