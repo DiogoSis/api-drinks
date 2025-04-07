@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { DrinkRepository } from "../repositories/repository";
+import { DrinkRepository } from "../repositories/drinkRepository";
 import { DrinkService } from "../services/services";
 import { DrinkController } from "../controllers/drinkController";
 
