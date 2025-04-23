@@ -1,19 +1,24 @@
-output "api_endpoint" {
-  description = "URL base da API"
-  value       = aws_apigatewayv2_stage.default.invoke_url
+output "api_gateway_url" {
+  description = "URL of the API Gateway endpoint"
+  value       = "${aws_api_gateway_deployment.api_deployment.invoke_url}/${var.environment}"
 }
 
-output "lambda_function_name" {
-  description = "Nome da função Lambda"
-  value       = aws_lambda_function.api.function_name
+output "cognito_user_pool_id" {
+  description = "ID of the Cognito User Pool"
+  value       = aws_cognito_user_pool.api_drinks.id
 }
 
-output "lambda_arn" {
-  description = "ARN da função Lambda"
-  value       = aws_lambda_function.api.arn
+output "cognito_client_id" {
+  description = "ID of the Cognito User Pool Client"
+  value       = aws_cognito_user_pool_client.api_client.id
 }
 
-output "s3_bucket" {
-  description = "Bucket S3 com o código do Lambda"
-  value       = aws_s3_bucket.lambda_bucket.id
+output "rds_endpoint" {
+  description = "Endpoint of the RDS PostgreSQL instance"
+  value       = aws_db_instance.postgres.endpoint
+}
+
+output "lambda_function_names" {
+  description = "Names of the Lambda functions"
+  value       = { for k, v in aws_lambda_function.api_lambda : k => v.function_name }
 }

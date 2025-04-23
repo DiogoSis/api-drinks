@@ -1,147 +1,172 @@
-# API Drinks - Sistema de Gerenciamento de Bebidas
+# API de Drinks - Refatoração e Expansão
+
+Este repositório contém uma API completa para gerenciamento de drinks, ingredientes, estoque, pedidos e fornecedores, desenvolvida com Node.js/TypeScript, Express e Prisma.
 
 ## Visão Geral
 
-API Drinks é uma aplicação backend RESTful desenvolvida com Node.js, TypeScript, Express e Prisma que gerencia dados de bebidas (drinks), suas receitas e ingredientes. Esta API segue os princípios SOLID e utiliza uma arquitetura em camadas para promover a manutenibilidade e escalabilidade.
+A API de Drinks é uma solução completa para bares e estabelecimentos que trabalham com bebidas, permitindo o gerenciamento de:
 
-## Arquitetura
+- Drinks e suas receitas
+- Ingredientes e controle de estoque
+- Pedidos e atendimento
+- Fornecedores e relações
+- Categorias e unidades de medida
+- Autenticação e autorização de usuários
 
-O projeto segue uma arquitetura em camadas que separa claramente as responsabilidades:
-
-- **Controllers**: Gerenciam requisições HTTP e respostas
-- **Services**: Implementam a lógica de negócio
-- **Repositories**: Interagem com o banco de dados
-- **Interfaces**: Definem contratos para classes e objetos
-
-### Diagrama de Arquitetura
-```
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │ Routes │─→─│ Controllers │─→─│ Services │─→─│ Repository │ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │ ↓ ┌─────────────┐ │ Database │ └─────────────┘
-```
-
-## Regras de Negócio
-
-### Entidades Principais
-
-1. **Drink**
-   - Representa uma bebida com nome, descrição, categoria e modo de preparo
-   - Cada drink é composto por múltiplos ingredientes em quantidades específicas
-
-2. **Ingrediente**
-   - Representa um item usado na composição de bebidas
-   - Possui uma unidade de medida e categoria associadas
-
-3. **ReceitaDrink**
-   - Representa a relação entre um drink e seus ingredientes
-   - Armazena a quantidade necessária de cada ingrediente para preparar o drink
-
-4. **UnidadeMedida**
-   - Define as unidades de medida usadas para os ingredientes (ml, oz, unidade, etc)
-
-### Relacionamentos
-
-- Um **Drink** pode ter vários **Ingredientes** através da tabela de junção **ReceitaDrink**
-- Um **Ingrediente** pode estar presente em vários **Drinks**
-- Cada **Ingrediente** tem uma **UnidadeMedida** associada
-
-## Endpoints API
-
-A API fornece os seguintes endpoints:
-
-### Get Drinks
-``` 
-GET /drink-list
-```
-
-Retorna a lista completa de drinks ordenados por ID, incluindo todos os ingredientes, quantidades e unidades de medida.
-
-### Get Drink by ID
-```
-GET /drink-list?drinkId=<id>
-```
-
-
-Retorna um drink específico pelo seu ID, incluindo todos os ingredientes, quantidades e unidades de medida.
+A API foi desenvolvida seguindo os princípios SOLID, com uma arquitetura em camadas que separa claramente as responsabilidades entre controllers, services e repositories.
 
 ## Tecnologias Utilizadas
 
-- **Node.js**: Ambiente de execução JavaScript
-- **TypeScript**: Linguagem de programação tipada
-- **Express**: Framework para aplicações web
-- **Prisma**: ORM para mapeamento e interação com o banco de dados
-- **PostgreSQL**: Sistema de gerenciamento de banco de dados relacional
-- **AWS Lambda**: Função serverless para executar a aplicação
-- **AWS API Gateway**: Gateway de API para expor os endpoints
-- **Terraform**: Ferramenta de infraestrutura como código
+- **Backend**: Node.js, TypeScript, Express
+- **ORM**: Prisma
+- **Banco de Dados**: PostgreSQL
+- **Validação**: Zod
+- **Autenticação**: JWT
+- **Testes**: Jest
+- **Infraestrutura**: AWS (Lambda, API Gateway, RDS, Cognito)
+- **IaC**: Terraform
 
-## Instalação
+## Estrutura do Projeto
+
+```
+api-drinks/
+├── docs/                    # Documentação
+│   ├── architecture/        # Diagramas e descrições de arquitetura
+│   ├── routes/              # Documentação das rotas da API
+│   └── examples/            # Exemplos de payloads
+├── prisma/                  # Configuração do Prisma e schemas
+├── src/                     # Código-fonte
+│   ├── config/              # Configurações da aplicação
+│   ├── controllers/         # Controllers da API
+│   ├── dtos/                # Data Transfer Objects
+│   ├── errors/              # Classes de erro
+│   ├── interfaces/          # Interfaces e tipos
+│   ├── middlewares/         # Middlewares Express
+│   ├── repositories/        # Repositories para acesso ao banco
+│   ├── routes/              # Definição de rotas
+│   ├── services/            # Serviços com lógica de negócio
+│   ├── utils/               # Utilitários
+│   ├── lambda.ts            # Ponto de entrada para AWS Lambda
+│   └── main.ts              # Ponto de entrada da aplicação
+├── terraform/               # Configuração de infraestrutura AWS
+└── tests/                   # Testes automatizados
+    ├── unit/                # Testes unitários
+    └── integration/         # Testes de integração
+```
+
+## Instalação e Configuração
+
+### Pré-requisitos
+
+- Node.js 18+
+- PostgreSQL
+- AWS CLI (para deploy)
+- Terraform (para infraestrutura)
+
+### Instalação Local
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/api-drinks.git
+   git clone https://github.com/DiogoSis/api-drinks.git
    cd api-drinks
    ```
+
 2. Instale as dependências:
-```
-npm install
-```
+   ```bash
+   npm install
+   ```
+
 3. Configure as variáveis de ambiente:
-    - Crie um arquivo .env baseado no .env.example
-    - Configure a URL de conexão do banco de dados PostgreSQL
+   ```bash
+   cp .env.example .env
+   # Edite o arquivo .env com suas configurações
+   ```
 
-4. Gere o Prisma Client:
+4. Execute as migrações do banco de dados:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+
+### Execução dos Testes
+
+```bash
+# Testes unitários
+npm run test:unit
+
+# Testes de integração
+npm run test:integration
+
+# Todos os testes
+npm test
 ```
-npx prisma generate
-```
-5. Execute a aplicação:
-```
-npm run start:dev
-```
 
-## Estrutura de Diretórios
-```
-api-drinks/
-├── prisma/
-│   └── schema.prisma     # Definição do schema do banco de dados
-├── src/
-│   ├── controllers/      # Controladores da API
-│   ├── interfaces/       # Interfaces TypeScript
-│   ├── repositories/     # Camada de acesso a dados
-│   ├── routes/           # Definição de rotas
-│   ├── services/         # Lógica de negócio
-│   └── main.ts           # Ponto de entrada da aplicação
-├── terraform/            # Configuração do Terraform para AWS
-│   ├── main.tf           # Configuração principal do Terraform
-│   ├── variables.tf      # Definição das variáveis
-│   ├── lambda.tf         # Configuração do Lambda
-│   ├── api-gateway.tf    # Configuração da API Gateway
-│   ├── iam.tf            # Configuração das permissões IAM
-│   └── outputs.tf        # Outputs (URL da API, etc)
-├── scripts/              # Scripts auxiliares
-│   └── build.sh          # Script para construir o pacote de deploy
-├── .env                  # Variáveis de ambiente
-├── package.json          # Dependências e scripts
-├── tsconfig.json         # Configuração do TypeScript
-└── README.md             # Esta documentação
-```
-## Modelo de Banco de Dados
+## Deploy na AWS
 
-O sistema utiliza um banco de dados PostgreSQL com as seguintes tabelas principais:
+### Usando Terraform
 
-- **drink**: Armazena informações sobre as bebidas
-- **ingrediente**: Armazena informações sobre ingredientes
-- **receitadrink**: Tabela de junção entre drinks e ingredientes
-- **unidademedida**: Define unidades de medida para ingredientes
+1. Configure suas credenciais da AWS:
+   ```bash
+   aws configure
+   ```
 
-## Como Contribuir
+2. Inicialize o Terraform:
+   ```bash
+   cd terraform
+   terraform init
+   ```
 
-Para contribuir com este projeto, por favor:
+3. Crie um arquivo de variáveis:
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   # Edite o arquivo terraform.tfvars com suas configurações
+   ```
 
-1. Faça um fork do repositório
-2. Crie um branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Faça commit das suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Envie para o branch (`git push origin feature/nova-funcionalidade`)
+4. Planeje e aplique a infraestrutura:
+   ```bash
+   terraform plan -out=tfplan
+   terraform apply tfplan
+   ```
+
+### Deploy Manual das Funções Lambda
+
+1. Construa o projeto:
+   ```bash
+   npm run build
+   ```
+
+2. Empacote para o Lambda:
+   ```bash
+   npm run package
+   ```
+
+3. Faça o upload do pacote para o Lambda:
+   ```bash
+   cd dist
+   aws lambda update-function-code --function-name api-drinks-dev-auth --zip-file fileb://lambda.zip
+   # Repita para cada função Lambda
+   ```
+
+## Documentação da API
+
+A documentação completa da API está disponível na pasta `docs/`:
+
+- **Arquitetura**: Diagramas e descrições da arquitetura do sistema
+- **Rotas**: Documentação detalhada de todas as rotas da API
+- **Exemplos**: Exemplos de payloads para as principais operações
+
+## Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`)
+4. Faça push para a branch (`git push origin feature/nova-feature`)
 5. Abra um Pull Request
 
 ## Licença
 
-Este projeto está licenciado sob a licença ISC.
+Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
